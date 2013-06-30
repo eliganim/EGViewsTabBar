@@ -8,6 +8,7 @@ You can customize the amount of tabs, their size, the tab bar height and backgro
 
 Usage
 -----
+- Add EGViewsTabBar.h and EGViewsTabBar.m to your project
 - Import "EGViewsTabBar.h" and conform to the EGViewsTabBarDelegate protocol
 - Create a new instance and add it to your view
 ```ObjectiveC
@@ -29,16 +30,16 @@ Additional Info
 ---------------
 - EGViewsTabBar has 2 methods:
 
+This is the only method you should use to create a new instance of EGViewsTabBar
 ```ObjectiveC
 	- (id)initWithFrame:(CGRect)frame delegate:(id<EGViewsTabBarDelegate>)delegate;
 ```
-This is the only method you should use to create a new instance of EGViewsTabBar
-
+<br>
+EGViewsTabBar caches your views and only asks for them the first time a tab is clicked. The next time you click a tab, the correct view will be loaded from the cache.
+You can use this method in order to clear the cache and enforce a reload of all the views.
 ```ObjectiveC
 	- (void)clearCache;
 ```
-EGViewsTabBar caches your views and only asks for them the first time a tab is clicked. The next time you click a tab, the correct view will be loaded from the cache.
-You can use this method in order to clear the cache and enforce a reload of all the views.
 
 - Please note that the views that are returned by viewsTabBar:viewForTabIndex: should have the same frame as the EGViewsTabBar.
 
@@ -48,5 +49,5 @@ EGViewsTabBar is available under the MIT license.
 
 Contact
 -------
-If you find and issues or want to ask for any features, please use GitHub's issues module.
+If you find any issues or want to ask for any features, please use GitHub's issues module.
 If you're using this control, please let me know: movingapp@gmail.com
