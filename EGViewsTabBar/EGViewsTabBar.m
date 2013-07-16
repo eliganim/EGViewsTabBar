@@ -78,6 +78,10 @@
     {
         tabsView.barBackgroundImage = [delegate viewsTabBarBackgroundImage:self];
     }
+    else if ([delegate respondsToSelector:@selector(viewsTabBarBackgroundGradient:)])
+    {
+        tabsView.gradientColors = [delegate viewsTabBarBackgroundGradient:self];
+    }
     else if ([delegate respondsToSelector:@selector(viewsTabBarBackgroundColor:)])
     {
         tabsView.barBackgroundColor = [delegate viewsTabBarBackgroundColor:self];
@@ -169,7 +173,7 @@
 
 @implementation TabsView
 
-@synthesize barBackgroundImage, barBackgroundColor, selectedRect;
+@synthesize barBackgroundImage, barBackgroundColor, selectedRect, gradientColors;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -212,11 +216,6 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    if (barBackgroundImage != nil)
-    {
-        barBackgroundColor = [UIColor colorWithPatternImage:barBackgroundImage];
-    }
-    
     CGPathRef path = [self makeTabsPath:CGRectMake(selectedRect.origin.x - TAB_IMAGES_GAP*0.65,
                                                    selectedRect.origin.y - 10,
                                                    selectedRect.size.width + TAB_IMAGES_GAP*1.3,
@@ -224,7 +223,38 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
     CGContextAddPath(context, path);
-    CGContextSetFillColorWithColor(context, barBackgroundColor.CGColor);
+
+    if (barBackgroundImage != nil)
+    {
+        barBackgroundColor = [UIColor colorWithPatternImage:barBackgroundImage];
+        CGContextSetFillColorWithColor(context, barBackgroundColor.CGColor);
+    }
+    else if (gradientColors != nil)
+    {
+        CGFloat colors[4*gradientColors.count];
+        for (int i=0; i<gradientColors.count; i++)
+        {
+            UIColor *color = gradientColors[i];
+            const float* colorValues = CGColorGetComponents(color.CGColor);
+            colors[i*4] = colorValues[0]; colors[i*4+1] = colorValues[1]; colors[i*4+2] = colorValues[2]; colors[i*4+3] = colorValues[3];
+        }
+
+        CGColorSpaceRef baseSpace = CGColorSpaceCreateDeviceRGB();
+        CGGradientRef gradient = CGGradientCreateWithColorComponents(baseSpace, colors, NULL, gradientColors.count);
+        CGColorSpaceRelease(baseSpace);
+        baseSpace = NULL;
+        CGPoint startPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMinY(rect));
+        CGPoint endPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMaxY(rect));
+        CGContextClip(context);
+        CGContextDrawLinearGradient(context, gradient, startPoint, endPoint, 0);
+        CGGradientRelease(gradient);
+        gradient = NULL;
+    }
+    else
+    {
+        CGContextSetFillColorWithColor(context, barBackgroundColor.CGColor);
+    }
+
     CGContextEOFillPath(context);
     CGContextRestoreGState(context);
     CFRelease(path);

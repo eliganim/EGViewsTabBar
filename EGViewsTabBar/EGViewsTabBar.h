@@ -29,8 +29,12 @@
 // You can specify a background color to the tab bar. Default is lightGrayColor
 - (UIColor*)viewsTabBarBackgroundColor:(EGViewsTabBar*)viewsTabBar;
 
-// You can specify a background image to the tab bar.
+// You can specify more than one background colors to be used as a gradient
 // If this is defined, it will ignore the viewsTabBarBackgroundColor: selector
+- (NSArray*)viewsTabBarBackgroundGradient:(EGViewsTabBar*)viewsTabBar;
+
+// You can specify a background image to the tab bar.
+// If this is defined, it will ignore the viewsTabBarBackgroundGradient and viewsTabBarBackgroundColor: selectors
 - (UIImage*)viewsTabBarBackgroundImage:(EGViewsTabBar*)viewsTabBar;
 
 // The tab bar height. This will affect the size of the tab bar image. Default is 60
@@ -58,6 +62,7 @@
 
 
 @interface TabsView : UIView
+@property (nonatomic, strong) NSArray *gradientColors;
 @property (nonatomic, strong) UIImage *barBackgroundImage;
 @property (nonatomic, strong) UIColor *barBackgroundColor;
 @property (nonatomic, assign) CGRect selectedRect;
